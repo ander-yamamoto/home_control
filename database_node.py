@@ -3,11 +3,10 @@ import datetime
 
 database = 'data.db'
 
-def db_node_init():
+def init():
 	conn = sqlite3.connect(database)
 	cursor = conn.cursor()
 
-	
 	cursor.execute("""
 	CREATE TABLE IF NOT EXISTS node (
 			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +24,7 @@ def db_node_init():
 
 
 
-def db_node_create (node):
+def create (node):
 	conn = sqlite3.connect(database)
 	cursor = conn.cursor()
 
@@ -33,30 +32,61 @@ def db_node_create (node):
 		cursor.execute("""
 		INSERT INTO node (name,	topic, item_id,ip, status, last_update)
 		VALUES (?,?,?,?,?,?)""", node)
-	
+
 	except sqlite3.Error as er:
-		print ('Failed to create node '.join(er.args))
+		print ("ERROR: ".join(er.args))
 	else:
 		conn.commit()
 		print ('NODE inserted')
 	finally:
 		conn.close()
-    
 
-def db_node_read(param):
+
+def read(col, condition, param):
 	er = None
 	conn = sqlite3.connect(database)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""
-		SELECT * FROM node WHERE name=?""", param)
+		cursor.execute("SELECT "+col+" FROM node WHERE "+condition + " ?", param)
 	
 	except sqlite3.Error as er:
 		print ('Error reading from DB '.join(er.args))
 	else:
-		node = cursor.fetchall()
+		data = cursor.fetchall()
 	finally:
 		conn.close()
-		return (node, er)
+		return (data, er)
 
 
+def updatetime (client, userdata, msg):
+	conn = sqlite3.connect(database)
+	cursor = conn.cursor()
+	try:
+		cursor.execute("""UPDATE node SET last_update=? WHERE topic=?""", (datetime.datetime.now(),msg.topic.split('/')[1],))
+
+	except sqlite3.Error as er:
+		print ('Error updating timestamp '.join(er.args))
+	else:
+		conn.commit()
+		print ('Timestamp updated')
+	finally:
+		conn.close()
+
+
+def updatestate (client,userdata,msg):
+	conn = sqlite3.connect(database)
+	cursor = conn.cursor()
+
+	try:
+		
+		state = (msg.payload == b'ON')
+		cursor.execute("""UPDATE node SET status=? WHERE topic=? AND item_id=?""",(state ,msg.topic.split('/')[1],msg.topic.split('/')[2],))
+
+	except sqlite3.Error as er:
+		print ('Error updating status '.join(er.args))
+	else:
+		conn.commit()
+		print ('status updated')
+	finally:
+		conn.close()
+	

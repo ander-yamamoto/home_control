@@ -3,7 +3,7 @@ import datetime
 
 database = 'data.db'
 
-def db_user_init():
+def init():
         conn = sqlite3.connect(database)
         cursor = conn.cursor()
 
