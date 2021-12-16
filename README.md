@@ -1,12 +1,14 @@
 # home_control
 
-Small control to home automation
+Python API for simple home control
 
-Python API
-	Rest API
-	SQLite database
-	MQTT protocol
+Simple light bulb remote control using Tasmota SONOFF miniR2 and a Beaglebone Black as MQTT broker.
+This Python API is a MQTT client, monitoring changes of status of the light bulbs.
+The Light status is stored to a slqite db.
+The API will serve web and mobile clients
 
-Web client
 
-Flutter client
+Python modules:
+Flask (tryed to install fastapi on BBB but failed)
+SQLite3
+Paho MQTT
