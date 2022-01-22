@@ -1,6 +1,6 @@
-.env
+.env_local
 .venv
-*.db
-__pycache__/
-__pycache__/*
+**/db.*
+**/__pycache__/
+
 

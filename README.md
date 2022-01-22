@@ -10,5 +10,7 @@ The API will serve web and mobile clients
 
 Python modules:
 Flask (tryed to install fastapi on BBB but failed)
-SQLite3
-Paho MQTT
+Flask-Alchemy for database
+Flask-mqtt
+
+
