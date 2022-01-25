@@ -2,5 +2,5 @@
 .venv
 **/db.*
 **/__pycache__/
-
+*.sql
 

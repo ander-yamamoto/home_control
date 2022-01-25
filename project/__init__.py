@@ -7,11 +7,9 @@ from dotenv import dotenv_values
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
 setup = dotenv_values('.env_local')
-
+app = Flask(__name__)
 
 def create_app():
-
-    app = Flask(__name__)
     
     app.config['SECRET_KEY'] = setup['SECRET_KEY']
     app.config['SQLALCHEMY_DATABASE_URI'] = setup['SQLALCHEMY_DATABASE_URI']
@@ -22,7 +20,9 @@ def create_app():
     app.config['MQTT_KEEPALIVE']=int(setup['MQTT_KEEPALIVE'])
     app.config['MQTT_TLS_ENABLED']=(setup['MQTT_TLS_ENABLED']=="True")
 
+    app.app_context().push()
     db.init_app(app)
+    
 
 
     from .models import User
