@@ -19,6 +19,7 @@ def create_app(debug=False):
     
     app.config['SECRET_KEY'] = setup['SECRET_KEY']
     app.config['SQLALCHEMY_DATABASE_URI'] = setup['SQLALCHEMY_DATABASE_URI']
+    app.config['TEMPLATES_AUTO_RELOAD']=(setup['TEMPLATES_AUTO_RELOAD']=="True")
     app.config['MQTT_BROKER_URL']=setup['MQTT_BROKER_URL']
     app.config['MQTT_BROKER_PORT']=int(setup['MQTT_BROKER_PORT'])
     app.config['MQTT_USERNAME']=setup['MQTT_USERNAME']
@@ -31,7 +32,7 @@ def create_app(debug=False):
     
 
 
-    from .models import User
+    from .main.models import User
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
@@ -43,14 +44,14 @@ def create_app(debug=False):
 
 
     # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
+    from .main.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
     # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
+    from .main.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    from . import mqtt_module
+
     mqtt.init_app(app)
     socketio.init_app(app)
 
