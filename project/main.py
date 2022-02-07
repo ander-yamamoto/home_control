@@ -4,7 +4,7 @@ from .models import Node
 
 
 main = Blueprint('main', __name__)
-from .mqtt import mqtt_var
+from . import mqtt
 
 
 @main.route('/')
@@ -20,24 +20,24 @@ def index_post():
         i=0
         for row in nodes:
             nodes[i].status = 1
-            mqtt_var.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'ON')
+            mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'ON')
             i=i+1
 
     elif 'bt2' in request.form:
         i=0
         for row in nodes:
             nodes[i].status = 0
-            mqtt_var.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'OFF')
+            mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'OFF')
             i=i+1
     else:
         i=0
         for row in nodes:
             if row.name in request.form:
                 if row.status == 0:
-                    mqtt_var.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'ON')
+                    mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'ON')
                     nodes[i].status = 1
                 else:
-                    mqtt_var.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'OFF')
+                    mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'OFF')
                     nodes[i].status = 0
             i=i+1
 

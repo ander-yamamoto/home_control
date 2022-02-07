@@ -5,25 +5,24 @@ from flask import Blueprint
 from .models import Node
 from . import app 
 from . import db
-from . import mqtt_var
-
-mqtt = Blueprint('mqtt', __name__)
+from . import mqtt
 
 
 
-@mqtt_var.on_connect()
+
+@mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    mqtt_var.subscribe('tele/+/STATE')
+    mqtt.subscribe('tele/+/STATE')
 
     with app.app_context():
         node = Node.query.filter_by(category="lamp")
         for row in node:
-            mqtt_var.subscribe('stat/'+row.topic+'/'+row.item_id)
+            mqtt.subscribe('stat/'+row.topic+'/'+row.item_id)
         for row in node:
-            mqtt_var.publish('cmnd/'+row.topic+'/'+row.item_id, None)
+            mqtt.publish('cmnd/'+row.topic+'/'+row.item_id, None)
 
 
-@mqtt_var.on_topic('stat/#')
+@mqtt.on_topic('stat/#')
 def handle_switch(client, userdata, message):
     with app.app_context():
         #print('Received message on topic {}: {}'.format(message.topic, message.payload.decode()))
@@ -34,7 +33,7 @@ def handle_switch(client, userdata, message):
         #print (Node.query.filter_by(topic=message.topic.split('/')[1], item_id=message.topic.split('/')[2])[0].status)
 
 
-@mqtt_var.on_topic('tele/+/STATE')
+@mqtt.on_topic('tele/+/STATE')
 def handle_state(client, userdata, message):
     with app.app_context():
         #print('Received message on topic {}: {}'.format(message.topic, message.payload.decode()))
@@ -45,7 +44,7 @@ def handle_state(client, userdata, message):
         #for row in Node.query.filter_by(topic=message.topic.split('/')[1]):
         #    print (row.last_update)
 
-@mqtt_var.on_message()
+@mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
     data = dict(
         topic=message.topic,
