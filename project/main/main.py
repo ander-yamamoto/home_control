@@ -15,29 +15,22 @@ def index():
 def index_post():
     nodes = Node.query.filter_by(category='lamp')
     if 'bt1' in request.form:
-        i=0
         for row in nodes:
-            nodes[i].status = 1
-            mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'ON')
-            i=i+1
+            mqtt.publish('cmnd/'+ row.topic + '/' + row.item_id, 'ON')
+
 
     elif 'bt2' in request.form:
-        i=0
         for row in nodes:
-            nodes[i].status = 0
-            mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'OFF')
-            i=i+1
+            mqtt.publish('cmnd/'+ row.topic + '/' + row.item_id, 'OFF')
+
     else:
-        i=0
         for row in nodes:
             if row.name in request.form:
                 if row.status == 0:
-                    mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'ON')
-                    nodes[i].status = 1
+                    mqtt.publish('cmnd/'+ row.topic + '/' + row.item_id, 'ON')
                 else:
-                    mqtt.publish('cmnd/'+ nodes[i].topic + '/' + nodes[i].item_id, 'OFF')
-                    nodes[i].status = 0
-            i=i+1
+                    mqtt.publish('cmnd/'+ row.topic + '/' + row.item_id, 'OFF')
+
 
 
     return redirect(url_for('main.index'))
