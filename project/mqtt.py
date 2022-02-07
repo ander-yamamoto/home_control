@@ -1,13 +1,14 @@
 import datetime
 from sqlalchemy import update
 from flask import Blueprint
-from flask_mqtt import Mqtt
+
 from .models import Node
 from . import app 
 from . import db
+from . import mqtt_var
 
-mqtt_var = Mqtt()
 mqtt = Blueprint('mqtt', __name__)
+
 
 
 @mqtt_var.on_connect()
